@@ -1,16 +1,17 @@
 # polygonoht
 Run binary data through the polygon OHT with n=2304
 
->$ polygonoht -h
->Usage: polygonoht [-h][-o <out filename>][-q][-b][-l][filename]
->  [-b] Interpret incoming binary data as big endian
->  [-l] Interpret incoming binary data as little endian (the default)
->  [-q] Quiet output. Only output the pass rate.
->  [-o <filename>] Send output text to a file
->  [-h] Print out this help information
->
->Run binary data through the polygon OHT with n=2304.
->  Author: David Johnston, dj@deadhat.com`
+```$ polygonoht -h
+Usage: polygonoht [-h][-o <out filename>][-q][-b][-l][filename]
+  [-b] Interpret incoming binary data as big endian
+  [-l] Interpret incoming binary data as little endian (the default)
+  [-q] Quiet output. Only output the pass rate.
+  [-o <filename>] Send output text to a file
+  [-h] Print out this help information
+
+Run binary data through the polygon OHT with n=2304.
+  Author: David Johnston, dj@deadhat.com
+```
 
 The Polygon Test
 
