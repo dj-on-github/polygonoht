@@ -25,7 +25,7 @@
 \definecolor{regline}{RGB}{15,110,86}
 \definecolor{chord}{RGB}{216,90,48}
 
-\title{An Exact Analytic Derivation of the Polygon Test Boundary\\
+\title{An Analytic Derivation of the Polygon Test Boundary\\
 for Online Min-Entropy Testing of Binary Data}
 \author{David Johnston}
 
@@ -38,7 +38,7 @@ for Online Min-Entropy Testing of Binary Data}
 
 This paper replaces the graphical extraction of polygon contours in \cite{johnston2024} 
 with a mathematical derivation of the
-boundary enabling more accurate min-entropy estimation of binary time series
+boundary enabling more accurate min-entropy bound testing of binary time series
 random data.
 
 A region of count pairs with asymptotic min-entropy rate at least
@@ -46,8 +46,9 @@ $H$ is shown to be bounded by exactly two straight lines arising from the
 all-ones and all-zeros repeating patterns, one straight feasibility line, and
 one curved edge: an arc of an ellipse arising from the alternating
 pattern. Closed forms are given for all corner points, for the boundary
-equations at any entropy threshold, and for a conservative linear chord that
-replaces the elliptic arc with one-sided error. The geometry changes from
+equations at any entropy threshold, and for a  linear chord that
+replaces the elliptic arc with one-sided error - yielding false-positive (Type 1) errors
+but not false-negative (Type 2). The geometry changes from
 a five-sided polygon to a 3 sided triangle (albeit with one edge being the
 elliptical arc) when  $H^\ast \geq \log_2\varphi\approx 0.694$, where $\varphi$ is the
 golden ratio. Integer comparator constants with conservative
@@ -87,7 +88,7 @@ over an $n$-bit block carry the same information as the Markov transition
 probabilities of a two state Markov generator,
 and that the region of count pairs corresponding to min-entropy above a
 threshold appears, when plotted, to be a polygon testable with a small number
-of linear inequality tests --- the \emph{polygon test}, deployed as the
+of linear inequality tests. The \emph{polygon test} is deployed as the
 vendor-defined continuous health test in fifth generation Intel CPU RNGs.
 
 The polygon of~\cite{johnston2024} was extracted from a rendered contour
@@ -104,8 +105,7 @@ direction ensures the resulting test error is one-sided and so is conservative.
 \section{Count Coordinates and the Inverse Map}
 \label{sec:inverse}
 
-For this calculation the coordinates are normalized over a block of $n$ bits with $N=n-1$ bit-pair
-positions:
+For this calculation the coordinates $pc1, pc11$ are normalized over a block of $n$ bits with $N=n-1$ bit-pair positions, for clarity the coordinates $(x,y)$ are set to $(pc1,pc11)$:
 \[
 x = \mathit{pc1} = \frac{\mathit{count1}}{N} = \hat\mu, \qquad
 y = \mathit{pc11} = \frac{\mathit{count11}}{N}.
@@ -129,16 +129,21 @@ $P_{00}=\mathit{count00}/\mathit{count0}$.
 \section{The Min-Entropy Rate in Closed Form}
 \label{sec:rate}
 
-The most common value (MCV) of a $b$-bit symbol from the model is a repeating
-two-bit pattern (all ones, all zeros, or alternating), possibly with a
+The Most Common Value (MCV) of a $b$-bit symbol from the model is a repeating
+two-bit pattern (one of all ones, all zeros or alternating), possibly with a
 deviating final bit for even $b$~\cite{johnston2024}. The symbol probabilities
 of the MCV candidates have the form
 $(\text{prefactor})\cdot P_{11}^{\,b-1}$,
 $(\text{prefactor})\cdot P_{00}^{\,b-1}$, or
 $(\text{prefactor})\cdot (P_{01}P_{10})^{\lfloor (b-1)/2\rfloor}$,
-where the prefactors such as $(P_{01}+P_{11})$ do not grow with $b$.
-The per-bit min-entropy rate is therefore determined by the stepwise
-geometric growth of the bit pattern of the MCV:
+where the prefactors do not grow with $b$. The prefactor accounts for the
+unknown bit preceding the symbol, weighting each case by its stationary
+probability $P_0=1-\mu$ or $P_1=\mu$: for a symbol whose first bit is 1,
+$P_0P_{01}+P_1P_{11}=\mu$, and for one whose first bit is 0,
+$P_0P_{00}+P_1P_{10}=1-\mu$.
+The per-bit min-entropy rate (Entropy Rate as defined in \cite{SP80090B})
+is therefore determined by the stepwise geometric growth of the bit pattern
+of the MCV:
 \begin{equation}
 H_\infty(x,y)
 = -\log_2 \max\!\Bigl(\, P_{11},\; P_{00},\; \sqrt{P_{01}P_{10}} \,\Bigr)
@@ -147,11 +152,10 @@ H_\infty(x,y)
 \frac{x-y}{\sqrt{x(1-x)}} \right).
 \label{eq:Hrate}
 \end{equation}
-Equation~\eqref{eq:Hrate} is the exact analytic form of the contours plotted
+Equation~\eqref{eq:Hrate} forms the contours plotted
 in Figure~10 of~\cite{johnston2024}. The prefactors shift the finite-width
-boundary by $O(1/b)$; for a block-level online test the rate is the right
-object, and the finite-width correction is discussed in
-Section~\ref{sec:drawbacks}.
+boundary by $O(1/b)$; for a block-level online test a finite-width correction 
+is discussed in Section~\ref{sec:drawbacks}.
 
 \section{The Exact Boundary}
 \label{sec:boundary}
@@ -185,20 +189,20 @@ y = x - p\sqrt{x(1-x)}.
 \end{equation}
 Since $\sqrt{x-x^2}$ is concave, $x - p\sqrt{x-x^2}$ is convex. The DE edge
 is therefore curved and convex, not piecewise linear, confirming
-the visual impression in~\cite{johnston2024}. Chords of a convex arc lie above it, so linear
-approximations by chords are automatically conservative
+the visual impression in~\cite{johnston2024}. Chords of a convex arc lie above it,
+so any linear approximation to one of the chords is conservative
 (Section~\ref{sec:chord}).
 \end{proposition}
 
-Notably, the CD edge $y \ge 2x-1$ used in~\cite{johnston2024} was written
-down from the plot but is in fact \emph{exact}: it is the feasibility line
+The CD edge $y \ge 2x-1$ used in~\cite{johnston2024} was written
+down from the plot but is in fact \emph{exact}. It is the line
 $P_{01}=1$, equivalently $\mathit{count00}=0$ to within one count.
 
 \section{Corners and the Two Regimes}
 \label{sec:corners}
 
-Intersecting adjacent constraints yields closed forms for every corner. Two
-regimes arise, separated by whether the constraints $P_{11}=p$ and
+Intersecting adjacent constraints yields closed forms for the corners. Two
+forms of polygon arise, separated by whether the constraints $P_{11}=p$ and
 $P_{01}P_{10}=p^2$ can be simultaneously active with $P_{01}\le 1$: that
 requires $P_{01}=p^2/(1-p)\le 1$, i.e.\ $p^2+p-1\le 0$, i.e.
 \begin{equation}
@@ -206,12 +210,10 @@ p \ge \frac{\sqrt5 - 1}{2} = \frac{1}{\varphi}
 \quad\Longleftrightarrow\quad
 H \le H^\ast = \log_2\varphi \approx 0.6942\,.
 \end{equation}
-The intersections are worked through below, followed by the regime condition
-derived directly in $(x,y)$ and a cross-check in Markov parameters.
 
 \subsection{Derivation of the corners}
 \label{sec:cornerderiv}
-Write the boundary curves of Section~\ref{sec:boundary} as functions of $x$:
+Boundary curves of Section~\ref{sec:boundary} as functions of $x$:
 \[
 \ell_{AB}(x) = (2-p)\,x-(1-p),\qquad
 \ell_{BC}(x) = p\,x,\qquad
@@ -230,8 +232,8 @@ B:&\quad \ell_{AB}(x)=\ell_{BC}(x) &&\Rightarrow\; 2(1-p)\,x = 1-p
 C:&\quad \ell_{BC}(x)=\ell_{CD}(x) &&\Rightarrow\; (2-p)\,x = 1
   &&\Rightarrow\; C=\Bigl(\frac{1}{2-p},\;\frac{p}{2-p}\Bigr).
 \end{align*}
-The cancellation of $1-p$ in $B$ is why the apex lies on $x=\tfrac12$ at
-every threshold.
+The cancellation of $1-p$ in $B$ leads to the the apex laying
+on $x=\tfrac12$ for every entropy rate.
 
 \paragraph{Line--arc corners.} Setting a line equal to $y_{\mathrm{arc}}$
 and moving everything except the square root to one side gives an equation
@@ -241,8 +243,13 @@ of the four boundary lines passes through one of these two points
 ($\ell_{BC}$ and $y=0$ through $(0,0)$; $\ell_{AB}$ and $\ell_{CD}$ through
 $(1,1)$). So every quadratic has a known root at $x=0$ or $x=1$. Factoring
 that root out leaves a linear equation whose root is the corner. In each case
-below, $L(x)\ge0$ on $[0,1]$, so squaring introduces no sign-spurious roots.
+below, $L(x)\ge0$ on $[0,1]$, so squaring introduces no spurious negative roots.
+
+\vspace{8pt}
+
 Let $\Delta=(1-p)^2+p^2$.
+
+\vspace{8pt}
 
 \emph{Corner $E$} ($y_{\mathrm{arc}}=0$, discard $x=0$):
 \begin{align*}
@@ -287,7 +294,7 @@ below $y=0$ for $0<x<x_E$, because $x<p\sqrt{x(1-x)}\iff x<x_E$. Near $x=1$
 the arc lies below $y=2x-1$ for $x>x_D$, because
 $p\sqrt{x(1-x)}>1-x\iff x>x_D$. In both intervals the arc is infeasible, and
 the line bounds the region instead. The pairs $(x_A,x_C)$, $(x_E,x_D)$ and
-$(x_{A'},x_{C'})$ each sum to~$1$, as the complement symmetry requires.
+$(x_{A'},x_{C'})$ each sum to~$1$.
 
 \paragraph{The regime condition.} On the axis $y=0$ the arc constraint
 $(x-y)^2\le p^2x(1-x)$ reads $x\le x_E$, and the AB constraint reads
@@ -299,23 +306,23 @@ $x_A\le x_E$:
 \iff 1-p+p^2-p^3\le 2p^2-p^3
 \iff 1-p-p^2\le 0,
 \]
-which is $p\ge1/\varphi$. By the complement symmetry, the same condition
-makes $x_D\le x_C$, so it also governs whether edge $CD$ exists. When
-$1-p-p^2>0$, the line AB meets the arc before reaching the axis. Its meeting
-point $A'$ has height $y_{A'}=(1-p)(1-p-p^2)/\Delta$, which is positive for
-exactly the same values of $p$. At the transition $p=1/\varphi$ we have
-$1-p=p^2$, so $\Delta=p^4+p^2$ and $x_{A'}=p^4/\bigl(p^2(1+p^2)\bigr)=x_E$:
-the corners $A$, $E$ and $A'$ coincide, and likewise $C$, $D$ and $C'$. The
-boundary deforms continuously from one regime to the other.
+which is $p\ge1/\varphi$. From this and the necessary symmetry,
+we find that $x_D\le x_C$, which also governs whether edge $CD$ exists. When
+$1-p-p^2>0$, the line AB meets the arc before reaching the axis. The
+point $A'$ that it meets has height $y_{A'}=(1-p)(1-p-p^2)/\Delta$, which is positive for
+ the same range of $p$ where $p\ge1/\varphi$. At the transition point $p=1/\varphi$ we have
+$1-p=p^2$, so $\Delta=p^4+p^2$ and $x_{A'}=p^4/\bigl(p^2(1+p^2)\bigr)=x_E$ .
+In that case, the corners $A$, $E$ and $A'$ coincide, and likewise $C$, $D$ and $C'$. The
+boundary changes continuously from the five sided polygon to the three sided polygon.
 
-Apex $B$ stays inside the region for every $H<1$. At $x=\tfrac12$ the arc
+The apex $B$ stays inside the region for every $0 < H<1$. At $x=\tfrac12$ the arc
 constraint requires $y\ge\tfrac{1-p}{2}$, and $y_B=\tfrac p2$ satisfies this
 iff $p\ge\tfrac12$.
 
-\paragraph{Cross-check in Markov parameters.} Each corner is a point where two
-constraints on the transition probabilities hold with equality. Using the
-stationary mean $x=\mu=P_{01}/(P_{01}+P_{10})$ and $y=\mu P_{11}$ gives the
-same coordinates independently:
+\paragraph{Cross-checking Against the Markov parameters.} Each corner is a point where two
+constraints on the transition probabilities are equal. Using the
+ mean $x=\mu=P_{01}/(P_{01}+P_{10})$ and $y=\mu P_{11}$ we get the
+same coordinates as were derived above:
 \begin{center}
 \begin{tabular}{lll}
 \toprule
@@ -333,9 +340,9 @@ $C'$ & $P_{11}=p$, $P_{01}P_{10}=p^2$ & $(p^2/(1-p),\;1-p)$ \\
 \end{center}
 For example, at $D$ we get $x=1/(1+p^2)$ and $y=x(1-p^2)$. At $A'$ the
 condition $P_{10}=p^2/(1-p)\le1$ is again $p^2+p-1\le0$, which recovers the
-regime boundary stated above.
+ boundary stated above.
 
-\subsection{Five-edge regime (\texorpdfstring{$H\le H^\ast$}{H<=H*})}
+\subsection{Five-edge Polgon Form (\texorpdfstring{$H\le H^\ast$}{H<=H*})}
 The boundary has five edges AB, BC, CD, DE (arc), EA with corners
 \begin{equation}
 \begin{aligned}
@@ -357,10 +364,10 @@ $E=(0.3648,0)$, against the image-extracted values
 $(0.2,0)$, $(0.5,0.4)$, $(0.8,0.6)$, $(0.6,0.2)$, $(0.4,0)$
 of~\cite{johnston2024}. Figure~\ref{fig:h04} shows the exact region.
 
-\subsection{Triangle regime (\texorpdfstring{$H> H^\ast$}{H > H*})}
+\subsection{Triangle Polygon Form (\texorpdfstring{$H> H^\ast$}{H > H*})}
 For $p<1/\varphi$ the region detaches from both the $y=0$ axis and the
 $P_{01}=1$ line: corners $C$ and $D$ merge, $E$ merges into $A$, and the
-region is bounded by the two entropy lines and the arc alone. With
+region is bounded by the upper two entropy lines and the arc below. With
 $\Delta=(1-p)^2+p^2$:
 \begin{equation}
 A' = \left(\tfrac{(1-p)^2}{\Delta},\, \tfrac{(1-p)(1-p-p^2)}{\Delta}\right),\qquad
@@ -369,10 +376,9 @@ C' = \left(\tfrac{p^2}{\Delta},\, \tfrac{p^3}{\Delta}\right),
 \label{eq:corners3}
 \end{equation}
 as derived in Section~\ref{sec:cornerderiv}, with $x_{A'}+x_{C'}=1$.
-The constraints $y\ge 2x-1$ and $y\ge 0$ remain true throughout the region
-but are implied by the others and never bind. Figure~\ref{fig:h08} shows the
+The constraints $y\ge 2x-1$ and $y\ge 0$ remain true throughout the region. Figure~\ref{fig:h08} shows the
 $H=0.8$ case, and Figure~\ref{fig:nested} the nested family across all nine
-thresholds, converging on the full-entropy point $(\tfrac12,\tfrac14)$ as
+thresholds, converging on the full-entropy point at $(\tfrac12,\tfrac14)$ as
 $H\to1$.
 
 \begin{figure}[htbp]
@@ -384,20 +390,26 @@ $H\to1$.
   xtick={0,0.2,...,1}, ytick={0,0.2,0.4,0.6}]
 \addplot[fill=regfill, draw=regline, thick] coordinates {(0.19494,0.00000) (0.50000,0.37893) (0.80506,0.61012) (0.63518,0.27037) (0.63068,0.26492) (0.62617,0.25950) (0.62166,0.25412) (0.61716,0.24878) (0.61265,0.24347) (0.60815,0.23819) (0.60364,0.23294) (0.59913,0.22773) (0.59463,0.22255) (0.59012,0.21740) (0.58562,0.21228) (0.58111,0.20720) (0.57660,0.20215) (0.57210,0.19713) (0.56759,0.19214) (0.56309,0.18718) (0.55858,0.18226) (0.55407,0.17737) (0.54957,0.17250) (0.54506,0.16767) (0.54055,0.16287) (0.53605,0.15811) (0.53154,0.15337) (0.52704,0.14866) (0.52253,0.14399) (0.51802,0.13934) (0.51352,0.13473) (0.50901,0.13014) (0.50451,0.12559) (0.50000,0.12107) (0.49549,0.11658) (0.49099,0.11212) (0.48648,0.10769) (0.48198,0.10329) (0.47747,0.09893) (0.47296,0.09459) (0.46846,0.09028) (0.46395,0.08601) (0.45945,0.08176) (0.45494,0.07755) (0.45043,0.07337) (0.44593,0.06922) (0.44142,0.06510) (0.43691,0.06101) (0.43241,0.05696) (0.42790,0.05293) (0.42340,0.04894) (0.41889,0.04498) (0.41438,0.04105) (0.40988,0.03715) (0.40537,0.03329) (0.40087,0.02946) (0.39636,0.02566) (0.39185,0.02189) (0.38735,0.01816) (0.38284,0.01446) (0.37834,0.01080) (0.37383,0.00716) (0.36932,0.00356) (0.36482,0.00000) (0.19494,0.00000)} -- cycle;
 \addplot[chord, thick, dashed] coordinates {(0.36479,0) (0.63521,0.27041)};
-\node[anchor=east] at (axis cs:0.27,0.32) {\small $y=(2{-}p)x-(1{-}p)$};
-\node[anchor=west] at (axis cs:0.68,0.42) {\small $y=px$};
-\node[anchor=west] at (axis cs:0.76,0.30) {\small $y=2x-1$};
-\node[anchor=north, chord] at (axis cs:0.44,0.028) {\small chord $y=x-c$};
-\node[below left] at (axis cs:0.195,0.02) {\small $A$};
+%\node[anchor=east] at (axis cs:0.27,0.32) {\small $y=(2{-}p)x-(1{-}p)$};
+\node[anchor=east] at (axis cs:0.4,0.28) {\small $y=(2{-}p)x-(1{-}p)$};
+%\node[anchor=west] at (axis cs:0.68,0.42) {\small $y=px$};
+\node[anchor=west] at (axis cs:0.55,0.52) {\small $y=px$};
+%\node[anchor=west] at (axis cs:0.76,0.30) {\small $y=2x-1$};
+\node[anchor=west] at (axis cs:0.7,0.40) {\small $y=2x-1$};
+%\node[anchor=north, chord] at (axis cs:0.44,0.028) {\small chord $y=x-c$};
+\node[anchor=north, chord] at (axis cs:0.65,0.15) {\small chord $y=x-c$};
+%\node[below left] at (axis cs:0.195,0.02) {\small $A$};
+\node[below left] at (axis cs:0.195,0.05) {\small $A$};
 \node[above] at (axis cs:0.5,0.379) {\small $B$};
 \node[right] at (axis cs:0.805,0.610) {\small $C$};
 \node[right] at (axis cs:0.635,0.270) {\small $D$};
-\node[below right] at (axis cs:0.365,0.02) {\small $E$};
+%\node[below right] at (axis cs:0.365,0.02) {\small $E$};
+\node[below right] at (axis cs:0.4,0.05) {\small $E$};
 \end{axis}
 \end{tikzpicture}
 \caption{Exact region $\mathcal{R}_{0.4}$ ($p=2^{-0.4}$): five-edge regime.
-The DE edge is the convex ellipse arc $y=x-p\sqrt{x(1-x)}$; the dashed line
-is the conservative slope-1 chord.}
+The DE edge is the convex ellipse arc $y=x-p\sqrt{x(1-x)}$. The dashed line
+is the linear approximation slope-1 chord.}
 \label{fig:h04}
 \end{figure}
 
@@ -410,17 +422,19 @@ is the conservative slope-1 chord.}
   xtick={0,0.2,...,1}, ytick={0,0.1,...,0.4}]
 \addplot[fill=regfill, draw=regline, thick] coordinates {(0.35452,0.07977) (0.50000,0.28717) (0.64548,0.37073) (0.64063,0.36505) (0.63578,0.35940) (0.63093,0.35378) (0.62608,0.34819) (0.62123,0.34263) (0.61639,0.33710) (0.61154,0.33160) (0.60669,0.32613) (0.60184,0.32068) (0.59699,0.31527) (0.59214,0.30988) (0.58729,0.30452) (0.58244,0.29920) (0.57759,0.29389) (0.57274,0.28862) (0.56789,0.28338) (0.56304,0.27816) (0.55819,0.27297) (0.55334,0.26781) (0.54849,0.26267) (0.54364,0.25757) (0.53880,0.25249) (0.53395,0.24743) (0.52910,0.24241) (0.52425,0.23741) (0.51940,0.23244) (0.51455,0.22750) (0.50970,0.22258) (0.50485,0.21769) (0.50000,0.21283) (0.49515,0.20799) (0.49030,0.20318) (0.48545,0.19840) (0.48060,0.19364) (0.47575,0.18892) (0.47090,0.18422) (0.46605,0.17954) (0.46120,0.17490) (0.45636,0.17028) (0.45151,0.16569) (0.44666,0.16112) (0.44181,0.15658) (0.43696,0.15208) (0.43211,0.14759) (0.42726,0.14314) (0.42241,0.13871) (0.41756,0.13432) (0.41271,0.12995) (0.40786,0.12561) (0.40301,0.12129) (0.39816,0.11701) (0.39331,0.11275) (0.38846,0.10853) (0.38361,0.10433) (0.37877,0.10016) (0.37392,0.09602) (0.36907,0.09191) (0.36422,0.08783) (0.35937,0.08379) (0.35452,0.07977)} -- cycle;
 \addplot[chord, thick, dashed] coordinates {(0.35452,0.07977) (0.64548,0.37073)};
-\node[anchor=east] at (axis cs:0.36,0.24) {\small $y=(2{-}p)x-(1{-}p)$};
-\node[anchor=west] at (axis cs:0.60,0.30) {\small $y=px$};
-\node[anchor=north] at (axis cs:0.52,0.155) {\small chord $y=x-c$};
+%\node[anchor=east] at (axis cs:0.36,0.24) {\small $y=(2{-}p)x-(1{-}p)$};
+\node[anchor=east] at (axis cs:0.45,0.24) {\small $y=(2{-}p)x-(1{-}p)$};
+%\node[anchor=west] at (axis cs:0.6,0.30) {\small $y=px$};
+\node[anchor=west] at (axis cs:0.46,0.35) {\small $y=px$};
+%\node[anchor=north] at (axis cs:0.52,0.155) {\small chord $y=x-c$};
+\node[anchor=north, chord] at (axis cs:0.65,0.24) {\small chord $y=x-c$};
 \node[below left] at (axis cs:0.355,0.08) {\small $A'$};
 \node[above] at (axis cs:0.5,0.287) {\small $B$};
 \node[right] at (axis cs:0.645,0.371) {\small $C'$};
 \end{axis}
 \end{tikzpicture}
-\caption{Exact region $\mathcal{R}_{0.8}$: triangle regime ($H>H^\ast$). The
-region has detached from $y=0$ and from $y=2x-1$; only the two entropy lines
-and the arc bind.}
+\caption{Exact region $\mathcal{R}_{0.8}$: triangle polygon form ($H>H^\ast$). The
+region has detached from $y=0$ and from $y=2x-1$.}
 \label{fig:h08}
 \end{figure}
 
@@ -447,21 +461,20 @@ and the arc bind.}
 \end{axis}
 \end{tikzpicture}
 \caption{The nested family of exact boundaries for
-$H=0.1,0.2,\dots,0.9$, shrinking onto the full-entropy point
-$(\tfrac12,\tfrac14)$. Apex $B$ of each region lies on $x=\tfrac12$ at height
-$p/2$; the structural transition from five edges to three occurs between
-$H=0.6$ and $H=0.7$, at $H^\ast=\log_2\varphi$.}
+$H=0.1,0.2,\dots,0.9$, converging onto the full-entropy point at
+$(\tfrac12,\tfrac14)$. The apex $B$ of each region lies on $x=\tfrac12$ at height
+$p/2$; the transition from five edges to three occurs at $H^\ast=\log_2\varphi$.}
 \label{fig:nested}
 \end{figure}
 
-\section{The Conservative Chord for the Elliptic Arc}
+\section{The Chord Approximation for the Elliptic Arc is Conservative}
 \label{sec:chord}
 
 \begin{proposition}[Slope-1 chord]
-At every entropy level, the chord connecting the endpoints of the active arc
-has slope exactly $1$. In the five-edge regime the endpoints are $E$ and $D$
-and $D_x - E_x = \frac{1-p^2}{1+p^2} = D_y - E_y$; in the triangle regime the
-endpoints are $A'$ and $C'$ and the same cancellation occurs. The chord is
+At every entropy level, the chord connecting the endpoints of the arc at $D$ and $E$
+(for the five edge polygon and $A'$ and $C'$ for the three edge polygon have slope of
+exactly $1$. In the five edge polygon form $D_x - E_x = \frac{1-p^2}{1+p^2} = D_y - E_y$
+and in the triangle form the same cancellation occurs. The chord is
 \begin{equation}
 y \;\ge\; x - c(H),\qquad
 c(H) =
@@ -473,13 +486,17 @@ c(H) =
 \end{equation}
 \end{proposition}
 
-Because the arc is convex and the chord endpoints lie on it, the chord lies
-above the arc: requiring $y\ge x-c$ is strictly stronger than the exact arc
-constraint, so replacing the arc with the chord yields a test that can only
-reject data whose true entropy is $\ge H$, never accept data below it. The
-chord is the only place the linear test gives anything away; the maximum
-sagitta (at $x=\tfrac12$, five-edge regime) is $c(H)-\tfrac{1-p}{2}$, about
-$0.014$ at $H=0.4$.
+Because the arc is convex out away from the full entropy point, and the
+chord endpoints lie on it, the chord lies
+above the arc, closer to the full entropy point. This implies that $y\ge x-c$
+and so the discriminating entropy of the count1, count11 pairs is greater than
+or equal to the entropy of the count1, count11 pairs on the arc.
+Therefore replacing the arc with the chord yields a test with a slightly higher
+false positive error rate for marginal sources operating close to the boundary. The
+area above the chord and below the linear approximation is the area that the
+linear test yields additional false-positive errors. The maximum
+radial difference between the chord and the are is at $x=\tfrac12$ is $c(H)-\tfrac{1-p}{2}$
+which is approximately $0.014$ at $H=0.4$.
 
 \section{Table of Linear Inequalities}
 \label{sec:table}
@@ -489,9 +506,9 @@ Table~\ref{tab:ineq} lists the four linear tests at nine entropy levels.
 \begin{table}[htbp]
 \centering
 \caption{Linear inequalities defining the conservative polygon at each
-entropy threshold, with $p=2^{-H}$. The DC test is only an active boundary
-edge for $H\le0.6$ of the listed levels; above $H^\ast$ it is implied by the
-others (marked ---) but remains harmless to include.}
+entropy threshold, with $p=2^{-H}$. The DC test is only an active test condition
+ for the levels where $H \le H^\ast$. Above $H^\ast$ it is marked --- to show
+ its absence.}
 \label{tab:ineq}
 \begin{tabular}{cccccc}
 \toprule
@@ -510,49 +527,54 @@ $H$ & $p=2^{-H}$ & AB: $y\le$ & BC: $y\le$ & DC: $y\ge$ & ED chord: $y\ge$\\
 \end{tabular}
 \end{table}
 
-\subsection{Perfect fit in the sub-threshold rows}
+\subsection{Perfect fit in the sub $H\ast$ rows}
 For $H\le H^\ast$ the chord line $y=x-c$ crosses $y=0$ at $x=c=x_E$ exactly
-and crosses the DC line $y=2x-1$ at $x=1-c=x_D$ exactly. Consequently the
+and crosses the DC line $y=2x-1$ at $x=1-c=x_D$. Consequently the
 five tests $\{$AB, BC, DC, chord, $y\ge0\}$ reproduce the exact corners
-$A$--$E$ with no slack anywhere except along the arc itself. The entire
-conservatism of the linear polygon test is the thin sliver between the chord
-and the convex arc.
+$A$--$E$ with no error except along the arc itself. The entire
+Type-1/False Positive error region of the linear polygon test is the
+region between the chord and the convex arc.
 
 \subsection{The \texorpdfstring{$H=0.5$}{H=0.5} special case}
-At $H=\tfrac12$, $p^2=\tfrac12$ exactly, so $c=1/3$ and $D=(\tfrac23,\tfrac13)$:
+At $H=\tfrac12$, $p^2=\tfrac12$, so $c=1/3$ and $D=(\tfrac23,\tfrac13)$:
 the chord test becomes $3\,\mathit{count11} \ge 3\,\mathit{count1} - N$,
-pure shift-and-add with zero coefficient quantization. Moreover the
-\emph{exact} arc test is dyadic at this level:
+which can be implemented using shift-and-add logic with zero coefficient
+quantization error. The  arc test at this entropy level is:
 $2(\mathit{count1}-\mathit{count11})^2 \le \mathit{count1}\,(N-\mathit{count1})$,
-with no approximation at all. $H=0.5$ is the natural threshold for a
-6{:}1-extraction design where hardware cost is at an absolute premium.
+which can be computed without approximation. $H=0.5$ is a natural threshold
+to choose for a design where hardware cost is at a premium, provided the
+noise source reliably generated bits with an entropy rate above 0.5.
 
 \subsection{Conversion to counts and rounding direction}
 Multiplying each inequality by $N$ converts $x\to\mathit{count1}$,
 $y\to\mathit{count11}$. All four constraints become monotonically
-\emph{stricter} as $p$ (or $c$) decreases: for AB,
-$\partial_p[(2-p)x-(1-p)] = 1-x > 0$; BC and the chord are immediate.
+\emph{stricter} as $p$ (or $c$) decrease. For AB,
+$\partial_p[(2-p)x-(1-p)] = 1-x > 0$.
 Therefore quantizing every irrational coefficient by rounding \emph{down}
 (and the subtracted intercept term up) shrinks the accept region and
-guarantees one-sided behavior: the integer test can only reject data whose
-true entropy is at least $H$.
+guarantees error increases in the false positive direction when using
+integer arithmetic with this rounding.
 
 \subsection{Tight triangle cases}
 At high thresholds the region is a thin triangle with apex
 $B=(\tfrac12,p/2)$; at $H=0.9$ the arc's sagitta is only ${\approx}0.003$, so
-the chord-versus-arc distinction becomes negligible, but coefficient
-quantization dominates: the fixed-point resolution of $p$ must be fine enough
-that the rounded-inward triangle does not collapse to the empty set. Twelve
-fractional bits suffice for $N=2303$ at $H=0.9$ (Section~\ref{sec:integer});
-as $H\to1$ the region converges to the single point $(\tfrac12,\tfrac14)$,
-i.e.\ $\mathit{count1}=N/2$, $\mathit{count11}=N/4$, as it must for full
-entropy data.
+the chord-versus-arc distinction becomes negligible while
+quantization of the coefficients dominates. The fixed-point resolution of $p$ must
+be fine enough
+that the rounded points inside the triangle do not collapse to the empty set. Twelve
+fractional bits suffice for $N=2303$ at $H=0.9$ (Section~\ref{sec:integer}).
+
+In the context of an online entropy test, raising the test boundary $H$ above
+0.9 would not be practical since the false positive error rate would domainate
+as $H$ approached $1$ and no real world noise source can be expected to operate
+close to $H=1$ without additional entropy extraction.
 
 \section{Deriving the Integer Comparator Constants}
 \label{sec:integer}
 
-Fix a block size $n$ (hence $N=n-1$) and a fixed-point scale $S=2^k$. The
-four comparators, in two's complement arithmetic, are
+For a block size $n$, $N=n-1$ and a fixed-point scale $S=2^k$. The
+four linear inequalities expressed with integer coefficients,
+in two's complement arithmetic, are
 \begin{align}
 \text{AB:}\quad & 2^k\,\mathit{count11} \;\le\; A_1\,\mathit{count1} - A_0,
 & A_1 &= \lfloor (2-p)\,S \rfloor,\;\; A_0 = \lceil (1-p)\,S\,N \rceil,
@@ -561,24 +583,28 @@ four comparators, in two's complement arithmetic, are
 & B_1 &= \lfloor p\,S \rfloor,
 \label{eq:bc}\\
 \text{DC:}\quad & \mathit{count11} \;\ge\; 2\,\mathit{count1} - N,
-& & \text{(exact; active for } H\le H^\ast\text{)},
+& & \text{(Only for}\  H\le H^\ast\text{)},
 \label{eq:dc}\\
 \text{ED:}\quad & \mathit{count11} \;\ge\; \mathit{count1} - C_0,
 & C_0 &= \lfloor c(H)\,N \rfloor.
 \label{eq:ed}
 \end{align}
 The multiplications by $2^k$ are realized in hardware as $k$-bit left
-shifts, i.e.\ wiring, at zero gate cost. The chord needs no fixed point
-at all because its slope is exactly~1.
+shifts. This typically is done by rearranging wires and so carries no
+gate cost. The linear chord approximation needs no fixed point arithmetic 
+because its slope is exactly~1.
 Table~\ref{tab:constants} gives the constants for the $n=2304$ example
-of~\cite{johnston2024} ($N=2303$, $k=12$, $S=4096$).
+of~\cite{johnston2024} ($N=2303$, $k=12$, $S=4096$) where 2304 is the
+number of bits needed to feed a 6:1 extraction ratio entropy extractor
+in order to yield enough bits (384) to reseed an SP800-90A\cite{SP80090A} CTR-DRBG using AES256.
+
 
 \begin{table}[htbp]
 \centering
 \caption{Integer comparator constants for $n=2304$, $k=12$. Note
-$A_1+B_1=8191$ in every row: the two slopes are $2-p$ and $p$, both floored,
+$A_1+B_1=8191$ in every row: the two slopes are $2-p$ and $p$, both rounded down,
 so they straddle $2S$ by exactly one LSB. $C_0$ at $H=0.5$ is
-$\lfloor 2303/3\rfloor = 767$, the dyadic case.}
+$\lfloor 2303/3\rfloor = 767$.}
 \label{tab:constants}
 \begin{tabular}{ccccccc}
 \toprule
@@ -614,11 +640,11 @@ $[540.7,\,617.1]$ --- one count of conservatism at the bottom, zero at the
 top.
 
 Listing~\ref{lst:gen} generates the constants for arbitrary $(H,n,k)$ with
-the correct rounding directions. One numerical caveat: double-precision
-evaluation of $p$ leaves ${\sim}2^{-52}$ of ambiguity, which matters only if
+the correct rounding directions. Evaluation with IEEE754 double-precision
+arithmetic of $p$ leaves ${\sim}2^{-52}$ of ambiguity, which matters only if
 a product lands within that distance of an exact integer; none of the nine
 rows above does, but for arbitrary parameters the floor/ceil operations
-should be evaluated with guard digits (e.g.\ \texttt{mpmath} or MPFR) to make
+may be evaluated with guard digits (e.g.\ by using \texttt{mpmath} or MPFR) to make
 them unambiguous.
 
 \begin{lstlisting}[caption={Generator for the integer comparator constants.},
@@ -651,11 +677,12 @@ for H in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
     print(H, polygon_constants(H, 2304))
 \end{lstlisting}
 
-\section{Multiplier-Based Exact Test of the Elliptic Arc}
+\section{Multiplier-Based Test of the Elliptic Arc}
 \label{sec:hardware}
 
-Where two multipliers are affordable, the arc can be tested exactly rather
-than by chord, buying back the ${\sim}1$-count conservatism. The constraint
+Where two multipliers are affordable, the arc can be tested rather
+than the chord approximation, removing the false positive errors resulting
+from the approximation. The constraint
 $(x-y)^2 \le p^2 x(1-x)$ scales to counts as
 \begin{equation}
 2^k\bigl(\mathit{count1}-\mathit{count11}\bigr)^2
@@ -665,7 +692,8 @@ P_2 \cdot \mathit{count1}\cdot\bigl(N-\mathit{count1}\bigr),
 P_2 = \lfloor p^2\, 2^k \rfloor,
 \label{eq:arcint}
 \end{equation}
-where flooring $P_2$ is the conservative direction (smaller $p^2$ shrinks the
+where the floor applied to $P_2$ rounds in the more false-positive
+direction (smaller $p^2$ shrinks the
 region). For $k=12$ the constants are $P_2 = 3565$, $3104$, $2702$, $2352$,
 $2048$, $1783$, $1552$, $1351$, $1176$ for $H=0.1$--$0.9$; the $H=0.5$ value
 is exactly $2048$, reducing the constant multiply to a shift with zero
@@ -677,8 +705,8 @@ For $n=2304$: $d=\mathit{count1}-\mathit{count11}\le 2303$ (12 bits),
 $d^2\le 5.3\mathrm{M}$ (23 bits), left side $2^{12}d^2$ needs 35 bits;
 $\mathit{count1}(N-\mathit{count1}) \le \lfloor N^2/4 \rfloor \approx
 1.33\mathrm{M}$ (21 bits), and $P_2\cdot q \le 4096\cdot1.33\mathrm{M}$
-(33 bits). A single 35-bit unsigned comparison completes the test. The
-datapath (Figure~\ref{fig:hw}) is two subtractors, one $12\times12$ squarer,
+(33 bits). The final test requires a 35-bit unsigned comparison. The
+datapath (Figure~\ref{fig:hw}) has two subtractors, one $12\times12$ squarer,
 one $12\times12$ multiplier, one constant multiplier (CSD shift-add network,
 or a true multiplier if $H$ must be runtime-programmable), and a comparator.
 The test fires once per $n$-bit block, so a single multiplier can be
@@ -689,15 +717,17 @@ critical.
 \centering
 \begin{tikzpicture}[
   blk/.style={draw, thick, minimum width=1.9cm, minimum height=0.85cm, align=center, font=\small},
+  blk2/.style={draw, thick, minimum width=2.0cm, minimum height=0.85cm, align=center, font=\small},
+  blk3/.style={draw, thick, minimum width=1.4cm, minimum height=0.85cm, align=center, font=\small},
   wire/.style={-{Stealth[length=2mm]}, semithick},
   lbl/.style={font=\scriptsize}]
-\node[blk] (sub1) at (0,0) {$a-b$};
-\node[blk] (sub2) at (0,-2.6) {$a-b$};
-\node[blk, right=1.5cm of sub1] (mul2) {$\times$\\[-2pt]{\scriptsize $12{\times}12$}};
-\node[blk, right=1.5cm of sub2] (sq) {$(\cdot)^2$\\[-2pt]{\scriptsize $12{\times}12$}};
-\node[blk, right=1.3cm of mul2] (cmul) {$\times P_2$\\[-2pt]{\scriptsize CSD const}};
-\node[blk, right=1.3cm of sq] (shift) {$\ll k$};
-\node[blk] (cmp) at (9.8,-1.3) {$a \ge b$};
+\node[blk3] (sub1) at (-0.7,0) {$a-b$};
+\node[blk3] (sub2) at (-0.7,-2.6) {$a-b$};
+\node[blk3, right=1.7cm of sub1] (mul2) {$\times$\\[-2pt]{\scriptsize $12{\times}12$}};
+\node[blk3, right=1.7cm of sub2] (sq) {$(\cdot)^2$\\[-2pt]{\scriptsize $12{\times}12$}};
+\node[blk2, right=1.3cm of mul2] (cmul) {$\times P_2$\\[-2pt]{\scriptsize CSD const}};
+\node[blk2, right=1.3cm of sq] (shift) {$\ll k$};
+\node[blk3] (cmp) at (9.8,-1.3) {$a \ge b$};
 \draw[wire] (-2.4,0.2) node[left, font=\small]{$N$} -- ([yshift=2mm]sub1.west);
 \draw[wire] (-2.4,-0.2) node[left, font=\small]{$\mathit{count1}$} -- ([yshift=-2mm]sub1.west);
 \draw[wire] (-2.4,-2.4) node[left, font=\small]{$\mathit{count1}$} -- ([yshift=2mm]sub2.west);
@@ -709,8 +739,8 @@ critical.
 \draw[wire] (sub2.east) -- node[lbl, above]{$d=\mathit{count10}$} (sq.west);
 \draw[wire] (mul2.east) -- node[lbl, above]{$q$ (21b)} (cmul.west);
 \draw[wire] (sq.east) -- node[lbl, above]{$d^2$ (23b)} (shift.west);
-\draw[wire] (cmul.east) -- ++(0.55,0) node[lbl, above left, xshift=2mm]{$P_2 q$ (33b)} |- ([yshift=2.5mm]cmp.west);
-\draw[wire] (shift.east) -- ++(0.55,0) node[lbl, below left, xshift=2mm]{$d^2\, 2^{k}$ (35b)} |- ([yshift=-2.5mm]cmp.west);
+\draw[wire] (cmul.east) -- ++(0.55,0) node[lbl, above left, xshift=12mm]{$P_2 q$ (33b)} |- ([yshift=2.5mm]cmp.west);
+\draw[wire] (shift.east) -- ++(0.55,0) node[lbl, below left, xshift=12mm]{$d^2\, 2^{k}$ (35b)} |- ([yshift=-2.5mm]cmp.west);
 \draw[wire] (cmp.east) -- node[lbl, above]{arc\_ok} ++(1.5,0);
 \end{tikzpicture}
 \caption{Datapath for the exact elliptic-arc test
@@ -728,10 +758,10 @@ $P_2=2^{k-1}$ and the constant multiplier reduces to a wire shift.}
 \section{Drawbacks and Scope}
 \label{sec:drawbacks}
 
-The limitations of~\cite{johnston2024} are inherited unchanged: the test
-applies to single-bit-symbol sources whose statistics are captured by mean
+The limitations of~\cite{johnston2024} remain unchanged: the test
+applies to single-bit-symbol sources whose statistics are fully described by mean
 and serial correlation, i.e.\ sources well modeled by the two-parameter
-Markov chain; sources with longer-range structure (e.g.\ ring oscillators
+Markov chain. Sources with longer-range structure (e.g.\ ring oscillators
 with complex phase noise coupling) require different methods. The boundary
 derived here is the \emph{asymptotic} rate boundary; for certification of
 finite symbol widths $b$, the same three-pattern maximum applies with the
@@ -739,13 +769,12 @@ full MCV prefactors of~\cite{johnston2024}, shifting each edge by $O(1/b)$.
 Finally, the counts over a finite block are estimates of $(x,y)$; the
 statistical false-positive rate of the online test at a given block size is
 set by the sampling distribution of the counts near the boundary, exactly as
-for the graphically derived polygon, and is unchanged by this work --- what
-changes is that the deterministic component of the error (boundary placement)
-is eliminated.
+for the graphically derived polygon, and is unchanged by this work.
+This paper removes the deterministic component of the error (boundary placement).
 
 \section{Conclusion}
 
-A complete closed for description of the polygon test boundary from 
+A closed form description of the polygon test boundary from 
 \cite{johnston2024} is derived.
 
 The region of $(\mathit{count1},\mathit{count11})$ pairs with min-entropy rate at
@@ -757,17 +786,17 @@ All corners have closed forms. A chord used as an easily computed approximation
 to the arc has slope exactly~1 with intercept $c(H)$ given in equation~\eqref{eq:chord}.
 
 An efficient two multiplier structure is given to identify points inside the arc
-but outside the chord approximation.
+but outside the linear chord approximation.
 
-By rounding integer constants toward the interior of the polygon yields a hardware test with only one-sided error. The uncertainty inherent in the image-extraction used in \cite{johnston2024} is eliminated while not increasing the gate count of digital hardware
+By rounding integer constants toward the interior of the polygon yields a hardware test with one-sided error. The uncertainty inherent in the image-extraction used in \cite{johnston2024} is eliminated while not increasing the gate count of digital hardware
 implementations of the test.
-
 
 \begin{thebibliography}{9}
 \bibitem{johnston2024}
 Johnston, D.: Online Testing Entropy and Entropy Tests with a Two State
 Markov Model. In: Proceedings of SPACE 2024. Springer (2024)
-
+\bibitem{SP80090B} Meltem Sönmez Turan (NIST), Elaine Barker (NIST), John Kelsey (NIST), Kerry McKay (NIST), Mary Baish (NSA), Michael Boyle (NSA), NIST SP800-90B, January 2018.
+\bibitem{SP80090A} Elaine B. Barker and John M. Kelsey, NIST SP800-90Ar1, June 2015.
 \end{thebibliography}
 
 \end{document}
