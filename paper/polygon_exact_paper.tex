@@ -494,8 +494,10 @@ or equal to the entropy of the count1, count11 pairs on the arc.
 Therefore replacing the arc with the chord yields a test with a slightly higher
 false positive error rate for marginal sources operating close to the boundary. The
 area above the chord and below the linear approximation is the area that the
-linear test yields additional false-positive errors. The maximum
-radial difference between the chord and the are is at $x=\tfrac12$ is $c(H)-\tfrac{1-p}{2}$
+linear test yields additional false-positive errors. The vertical gap
+between the chord and the arc is largest at $x=\tfrac12$, where the chord is
+at $\tfrac12-c(H)$ and the arc at $\tfrac{1-p}{2}$, so the maximum gap is
+$\bigl(\tfrac12-c(H)\bigr)-\tfrac{1-p}{2}=\tfrac{p}{2}-c(H)$,
 which is approximately $0.014$ at $H=0.4$.
 
 \section{Table of Linear Inequalities}
@@ -604,21 +606,22 @@ in order to yield enough bits (384) to reseed an SP800-90A\cite{SP80090A} CTR-DR
 \caption{Integer comparator constants for $n=2304$, $k=12$. Note
 $A_1+B_1=8191$ in every row: the two slopes are $2-p$ and $p$, both rounded down,
 so they straddle $2S$ by exactly one LSB. $C_0$ at $H=0.5$ is
-$\lfloor 2303/3\rfloor = 767$.}
+$\lfloor 2303/3\rfloor = 767$. The bitwidth column is the signed
+two's complement width needed to hold $-A_0$, $\lceil\log_2 A_0\rceil+1$.}
 \label{tab:constants}
 \begin{tabular}{ccccccc}
 \toprule
 $H$ & $A_1$ & $A_0$ & $B_1$ & $C_0$ & DC active? & bitwidth\\
 \midrule
-0.1 & 4370 & 631{,}706   & 3821 & 1071 & yes  & 20\\
-0.2 & 4626 & 1{,}221{,}108 & 3565 & 992 & yes & 21\\
-0.3 & 4865 & 1{,}771{,}040 & 3326 & 915 & yes & 21\\
-0.4 & 5087 & 2{,}284{,}145 & 3104 & 840 & yes & 22\\
-0.5 & 5295 & 2{,}762{,}888 & 2896 & 767 & yes & 22\\
-0.6 & 5489 & 3{,}209{,}571 & 2702 & 698 & yes & 22\\
-0.7 & 5670 & 3{,}626{,}342 & 2521 & 636 & implied & 22\\
-0.8 & 5839 & 4{,}015{,}202 & 2352 & 632 & implied & 22\\
-0.9 & 5997 & 4{,}378{,}022 & 2194 & 610 & implied & 23\\
+0.1 & 4370 & 631{,}706   & 3821 & 1071 & yes  & 21\\
+0.2 & 4626 & 1{,}221{,}108 & 3565 & 992 & yes & 22\\
+0.3 & 4865 & 1{,}771{,}040 & 3326 & 915 & yes & 22\\
+0.4 & 5087 & 2{,}284{,}145 & 3104 & 840 & yes & 23\\
+0.5 & 5295 & 2{,}762{,}888 & 2896 & 767 & yes & 23\\
+0.6 & 5489 & 3{,}209{,}571 & 2702 & 698 & yes & 23\\
+0.7 & 5670 & 3{,}626{,}342 & 2521 & 636 & implied & 23\\
+0.8 & 5839 & 4{,}015{,}202 & 2352 & 632 & implied & 23\\
+0.9 & 5997 & 4{,}378{,}022 & 2194 & 610 & implied & 24\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -695,7 +698,7 @@ P_2 = \lfloor p^2\, 2^k \rfloor,
 where the floor applied to $P_2$ rounds in the more false-positive
 direction (smaller $p^2$ shrinks the
 region). For $k=12$ the constants are $P_2 = 3565$, $3104$, $2702$, $2352$,
-$2048$, $1783$, $1552$, $1351$, $1176$ for $H=0.1$--$0.9$; the $H=0.5$ value
+$2048$, $1782$, $1552$, $1351$, $1176$ for $H=0.1$--$0.9$; the $H=0.5$ value
 is exactly $2048$, reducing the constant multiply to a shift with zero
 quantization loss. Note $\mathit{count1}-\mathit{count11}$ is simply
 $\mathit{count10}$, so the left operand is directly available if a 10-pair

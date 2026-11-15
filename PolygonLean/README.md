@@ -72,17 +72,18 @@ lake build
    grow with `b`, so the asymptotic rate and the second paper's boundary are
    unaffected; only finite-`b` MCV probabilities change. The second paper's §3
    has been updated to state the weighted prefactors.
-2. **Second paper §9, `P₂` at H = 0.6.** `⌊2^{-1.2}·4096⌋ = ⌊1782.89⌋ = 1782`, not
-   1783. The printed value is rounded up, which enlarges the accept region (the
-   non-conservative direction). See `row6`, `P2_row6_paper_value_too_large`.
-3. **Second paper Table 3, bitwidth column.** Every entry is one bit short for a
-   signed comparison: e.g. `631706 > 2¹⁹`, so `-A₀` needs 21 bits, not 20. The
-   listing's formula `ceil(log2(A0)) + 1` gives 21, 22, 22, 23, 23, 23, 23, 23,
-   24. See `bitwidth_column`. (The 25-bit claim in the text is right:
+2. **Second paper §9, `P₂` at H = 0.6. Fixed in the paper.**
+   `⌊2^{-1.2}·4096⌋ = ⌊1782.89⌋ = 1782`; the draft printed 1783, which was
+   rounded up and so enlarged the accept region (the non-conservative
+   direction). See `row6`, `P2_row6_paper_value_too_large`.
+3. **Second paper Table 3, bitwidth column. Fixed in the paper.** Every entry
+   was one bit short for a signed comparison: e.g. `631706 > 2¹⁹`, so `-A₀`
+   needs 21 bits, not 20. The column now gives the listing's
+   `ceil(log2(A0)) + 1`: 21, 22, 22, 23, 23, 23, 23, 23, 24. See `bitwidth_column`. (The 25-bit claim in the text is right:
    `bitwidth_25`.)
-4. **Second paper §6, maximum chord–arc gap.** The text gives `c(H) - (1-p)/2`.
-   The gap at `x = 1/2` is `(1/2 - c) - (1-p)/2 = p/2 - c`, which is the quoted
-   value 0.014 at H = 0.4 (the printed formula gives 0.244). See `chord_gap_max`.
+4. **Second paper §6, maximum chord–arc gap. Fixed in the paper.** The draft
+   gave `c(H) - (1-p)/2`. The gap at `x = 1/2` is `(1/2 - c) - (1-p)/2 = p/2 - c`,
+   which is the quoted value 0.014 at H = 0.4 (the old formula gives 0.244). See `chord_gap_max`.
 5. **First paper, H = 0.4 polygon.** The graphically extracted polygon accepts
    some points whose entropy rate is below 0.4, e.g. `(0.5, 0.39)`, or
    `count1 = 1152, count11 = 898` for `n = 2304`. This confirms the motivation of

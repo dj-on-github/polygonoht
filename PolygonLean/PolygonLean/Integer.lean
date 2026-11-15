@@ -195,7 +195,7 @@ lemma c3_bounds {lo hi p : ℝ} (hl : lo < p) (hh : p < hi) (h0 : 1 / 2 ≤ lo) 
 /-! ### Table 3 and the §9 `P₂` constants (`n = 2304`, `N = 2303`, `k = 12`)
 
 Each row is checked against the exact value of `p`. Row `H = 0.6` gives
-`P₂ = ⌊p²·4096⌋ = 1782`; the paper prints 1783, which is rounded up. -/
+`P₂ = ⌊p²·4096⌋ = 1782`; an earlier draft printed 1783, which is rounded up. -/
 
 /-- Row `H = 0.1` of Table 3 (and the `P₂` constant of §9). -/
 theorem row1 :
@@ -399,7 +399,7 @@ theorem row9 :
       pow_lt_pow_left₀ hh hp.le two_ne_zero
     constructor <;> nlinarith
 
-/-- The paper's `P₂ = 1783` at `H = 0.6` is one too large: rounding it up enlarges
+/-- The earlier draft's `P₂ = 1783` at `H = 0.6` is one too large: rounding it up enlarges
 the accept region, the non-conservative direction. -/
 theorem P2_row6_paper_value_too_large : ⌊pK 6 ^ 2 * 4096⌋ ≠ 1783 := by
   rw [row6.2.2.2.2]; norm_num
@@ -515,7 +515,7 @@ theorem bitwidth_25 (A1 A0 B1 c1 c11 : ℤ) (hA1 : 0 ≤ A1 ∧ A1 ≤ 5997)
     (-2 ^ 24 ≤ B1 * c1 ∧ B1 * c1 < 2 ^ 24) := by
   refine ⟨⟨by omega, by omega⟩, ⟨by nlinarith, by nlinarith⟩, ⟨by nlinarith, by nlinarith⟩⟩
 
-/-- The bitwidth column of Table 3 is one bit short for a signed comparison:
+/-- The bitwidth column of Table 3 (as first drafted) was one bit short for a signed comparison:
 in every row `-A₀ < -2^(BW-1)`, the most negative `BW`-bit two's-complement
 value, while `A₀ ≤ 2^BW`. The generator listing (`ceil(log2(A0)) + 1`) gives the
 correct widths 21, 22, 22, 23, 23, 23, 23, 23, 24. -/

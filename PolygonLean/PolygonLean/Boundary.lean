@@ -499,7 +499,7 @@ theorem chord3_above {x : ℝ} (h1 : xA' p ≤ x) (h2 : x ≤ xC' p) : yArc p x 
   rw [show p ^ 2 * (1 - p) / Δ p = p * (p * (1 - p) / Δ p) by ring]; linarith
 
 /-- The vertical gap between chord and arc is largest at `x = 1/2`, where it is
-`p/2 - c`. (The paper prints this as `c(H) - (1-p)/2`; the gap is
+`p/2 - c`. (An earlier draft printed `c(H) - (1-p)/2`; the gap is
 `(1/2 - c) - (1-p)/2 = p/2 - c`, which is the quoted `≈ 0.014` at `H = 0.4`.) -/
 theorem chord_gap_max (c x : ℝ) :
     (x - c) - yArc p x ≤ p / 2 - c ∧ (1 / 2 - c) - yArc p (1 / 2) = p / 2 - c := by

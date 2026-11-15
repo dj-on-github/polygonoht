@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  14 NOV 2026 15:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  15 NOV 2026 17:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -985,15 +985,15 @@ l/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
 [7]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 530.
+(hyperref)                removing `math shift' on input line 532.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ast' on input line 530.
+(hyperref)                removing `\ast' on input line 532.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 530.
+(hyperref)                removing `math shift' on input line 532.
 
 
 
@@ -1001,12 +1001,12 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [9]
 LaTeX Font Info:    Trying to load font information for OT1+lmtt on input line 
-647.
+650.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/ot1lmtt.fd
 File: ot1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 651.
+nput line 654.
 
 
 [10{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-rmtt.enc}]
@@ -1024,11 +1024,11 @@ Package rerunfilecheck Info: File `polygon_exact_paper.out' has not changed.
 Here is how much of TeX's memory you used:
  33910 strings out of 473190
  779721 string characters out of 5715801
- 1680843 words of memory out of 5000000
+ 1662843 words of memory out of 5000000
  56542 multiletter control sequences out of 15000+600000
  645736 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,13n,91p,1326b,2060s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,91p,1326b,2133s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
 cal/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texliv
 e/2025/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2025/tex
@@ -1049,7 +1049,7 @@ st/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/ty
 pe1/public/lm/lmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/
 lm/lmtt10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt12.
 pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on polygon_exact_paper.pdf (12 pages, 424610 bytes).
+Output written on polygon_exact_paper.pdf (12 pages, 424796 bytes).
 PDF statistics:
  361 PDF objects out of 1000 (max. 8388607)
  298 compressed objects within 3 object streams
